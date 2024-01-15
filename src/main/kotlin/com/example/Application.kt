@@ -1,5 +1,6 @@
 package com.example
 
+import com.example.consumers.configureScapeConsumer
 import com.example.controllers.configureScrapeController
 import com.example.plugins.*
 import io.ktor.server.application.*
@@ -31,4 +32,5 @@ fun Application.module() {
     configureHTTP()
     configureRouting()
     configureScrapeController()
+    configureScapeConsumer()
 }

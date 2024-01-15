@@ -1,5 +1,6 @@
 package com.example.controllers
 
+import com.example.contract.ScrapingTarget
 import com.example.plugins.City
 import com.example.tracing.withSpan
 import io.ktor.client.*
@@ -23,50 +24,14 @@ import kotlinx.coroutines.delay
 //import io.ktor.client.request.*
 
 import kotlinx.coroutines.launch
+import pl.jutupe.ktor_rabbitmq.publish
 
 fun Application.configureScrapeController() {
     routing {
         // Create city
         get("/scrape") {
-            async {
-                scrapeTheData()
-            }
+            call.publish("exchange", "routingKey", null, ScrapingTarget("https://www.ebay.com/itm/145309888550?hash=item21d524f026"))
         }
     }
 }
 
-suspend fun scrapeTheData(): Int = withSpan("my-span") { span ->
-    // run some code, maybe add a few attributes
-//    HttpClient().use { client ->
-//        client.get(builder = HttpRequestBuilder(){
-//            host="www.amazon.com"
-//        })
-//    }
-    val price = skrape(HttpFetcher) {
-        request {
-            url = "https://www.ebay.com/itm/145309888550?hash=item21d524f026"
-        }
-        response {
-            htmlDocument {
-                // all official html and html5 elements are supported by the DSL
-                div {
-                    withClass = "x-price-primary"
-                    findFirst {
-                        span {
-                            withClass = "ux-textspans"
-                            findFirst {
-                                text
-                            }
-
-
-                        }
-                    }
-                }
-            }
-        }
-    }
-    span.setAttribute("price",price)
-    System.out.println(price)
-    delay(1000L) // pretend we are doing something useful here
-    return@withSpan 13
-}
