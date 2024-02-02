@@ -19,6 +19,7 @@ suspend fun <T> withSpan(
     block: suspend (span: Span) -> T
 ): T = tracer.startSpan(spanName, parameters, coroutineContext, block)
 
+
 suspend fun <T> Tracer.startSpan(
     spanName: String,
     parameters: (SpanBuilder.() -> Unit)? = null,
